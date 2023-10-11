@@ -42,7 +42,10 @@ def snippets_page(request):
     return render(request, 'pages/view_snippets.html', context)
 
 def snippet_detail(request, snippet_id):
-    snippet = Snippet.objects.get(id=snippet_id)
+    try:
+        snippet = Snippet.objects.get(id=snippet_id)
+    except ObjectDoesNotExist:
+        raise Http404
     context = {
         'pagename': 'Просмотр сниппетов',
         'snippet': snippet,
@@ -63,16 +66,15 @@ def snippet_edit(request, snippet_id):
         snippet = Snippet.objects.get(id=snippet_id)
     except ObjectDoesNotExist:
         raise Http404
-    
+    # Получаем страницу с данными сниппета
     if request.method == "GET":
         context = {
             'pagename': 'Просмотр сниппетов',
             'snippet': snippet,
             'type': 'edit'
-        }
+            }
         return render(request, 'pages/snippet_detail.html', context)
-    
-
+    # Изменяем атрибуты сниппета на основе данных из формы и сохраняем в базу
     if request.method == "POST":
         data_form = request.POST
         snippet.name = data_form["name"]
