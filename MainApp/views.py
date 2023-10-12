@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from MainApp.forms import SnippetForm
 from MainApp.models import Snippet
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 
 
@@ -10,7 +11,7 @@ def index_page(request):
     context = {'pagename': 'PythonBin'}
     return render(request, 'pages/index.html', context)
 
-
+@login_required
 def add_snippet_page(request):
     # Получаем чистую форму для заполнения
     if request.method == "GET":
@@ -33,9 +34,20 @@ def add_snippet_page(request):
             
         return render(request, 'pages/add_snippet.html', {'form': form})
     
-                                                                                                                                                             
+
+@login_required
+def my_snippets(request):
+    snippets = Snippet.objects.filter(user=request.user)
+    context = {
+        'pagename': 'Мои сниппеты',
+        'snippets': snippets
+        }
+    return render(request, 'pages/view_snippets.html', context)
+
+
+
 def snippets_page(request):
-    snippets = Snippet.objects.all()
+    snippets = Snippet.objects.filter(public=True)
     context = {'pagename': 'Просмотр сниппетов',
                'snippets': snippets
                }
@@ -80,6 +92,7 @@ def snippet_edit(request, snippet_id):
         snippet.name = data_form["name"]
         snippet.code = data_form["code"]
         snippet.creation_date = data_form["creation_date"]
+        snippet.public = data_form.get('public', False)
         snippet.save()
         return redirect("snippets-list")
     
@@ -93,16 +106,19 @@ def login(request):
             auth.login(request, user)
         else:
             # Return error message
-            pass
+            context = {
+                'pagename': 'PythonBin',
+                'errors': 'wrong username or password',
+            }
+            return render(request, 'pages/index.html', context)
     return redirect('home')
 
 
 
 
 def logout(request):
-    auth.logout(request)
-    # реализуем перенаправление на ту страницу, на которой логинился пользователь
-    return redirect(request.META.get('HTTP_REFERER', '/'))
+    auth.logout(request)   
+    return redirect('home')
 
 
 # def create_snippet(request):

@@ -29,7 +29,8 @@
                         <th scope="col">ID</th>
                         <th scope="col">Название</th>
                         <th scope="col">Дата создания</th>      
-                        <th scope="col">пользователь</th>
+                        <th scope="col">Пользователь</th>
+                        <th scope="col">Публичный</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -44,7 +45,12 @@
                                 <i style="color:red" class="fa-solid fa-pen-to-square"></i></a>
                             </td>
                         <td>{{ snippet.creation_date }}</td>
-                        <td>{{ snippet.user.username }}</td>                 
+                        <td>{{ snippet.user.username }}</td>
+                        {% if snippet.public %}
+                           <td>Публичный</td>
+                        {% else %}
+                           <td>Приватный</td>
+                        {% endif %}                 
                     </tr>
 
                     
