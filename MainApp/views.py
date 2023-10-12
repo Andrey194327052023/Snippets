@@ -145,7 +145,6 @@ def logout(request):
 
 
 
-
 # def create_snippet(request):
 #    if request.method == "POST":
 #        print(f'{request.POST = }')
