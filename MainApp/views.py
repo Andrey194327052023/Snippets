@@ -121,6 +121,8 @@ def logout(request):
     return redirect('home')
 
 
+
+
 # def create_snippet(request):
 #    if request.method == "POST":
 #        print(f'{request.POST = }')
